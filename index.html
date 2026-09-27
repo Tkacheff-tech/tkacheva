@@ -46,7 +46,7 @@
   :root { --кегль-h1: clamp(44px, 4vw, 58px); }
 }
 :root, .светлый { --цвет-кнопки: #17181C; --цвет-на-кнопке: #FFFFFF; --цвет-кнопки-навёл: var(--цвет-акцент-тёмный); }
-.тёмный { --цвет-кнопки: #0FB4C8; --цвет-на-кнопке: #17181C; --цвет-кнопки-навёл: #13D6ED; }
+.тёмный, .липкая-кнопка--тёмная { --цвет-кнопки: #0FB4C8; --цвет-на-кнопке: #17181C; --цвет-кнопки-навёл: #13D6ED; }
 
 </style>
 <script>
@@ -132,15 +132,16 @@
   function пометить(на_виду) { document.body.classList.toggle(СПИТ, !!на_виду); }
 
   var б = кнопка.getBoundingClientRect();
-  пометить(б.bottom > 0 && б.top < (window.innerHeight || 0));
+  пометить(б.top >= 0 && б.bottom <= (window.innerHeight || 0));
 
   requestAnimationFrame(function () {
     requestAnimationFrame(function () { document.body.classList.add("панель-с-переходом"); });
   });
 
   new IntersectionObserver(function (записи) {
-    пометить(записи[записи.length - 1].isIntersecting);
-  }, { threshold: 0 }).observe(кнопка);
+    var з = записи[записи.length - 1];
+    пометить(з.isIntersecting && з.intersectionRatio >= 0.99);
+  }, { threshold: [0, 0.99, 1] }).observe(кнопка);
 })();
 </script>
 </body>
